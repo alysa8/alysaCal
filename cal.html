@@ -1,25 +1,23 @@
-
 <!DOCTYPE html>
-<!-- original:https://codepen.io/boudra/pen/raErwP -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=2.0">
     <title>Calendar</title>
 
     <style>
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #ffffff;
-  height: 100vh;
+    background-color: #ffffff; /* White background */
+    height: 100vh;
 }
 
 .wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-  flex-direction: column;
-  min-height: 100%;
+    flex-direction: column;
+    min-height: 100%;
 }
 
 button::-moz-focus-inner { 
@@ -31,15 +29,17 @@ button::-moz-focus-inner {
     margin: 20px 0;
     position: relative;
     overflow: hidden;
-    height: 370px; /* <--- CHANGED from 310px to 370px */
-    width: 350px;
-    font-size: 14px;
+    /* --- SIZE ADJUSTMENTS START --- */
+    height: 285px;  /* Reduced height */
+    width: 250px;   /* Reduced width */
+    font-size: 12px; /* Smaller font */
+    /* --- SIZE ADJUSTMENTS END --- */
     box-shadow: 0px 1px 4px rgba(0,0,0,0.4);
 }
 table {
     border-collapse: collapse;
     table-layout: fixed;
-    width: 350px;
+    width: 250px; /* Reduced width to match container */
     box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
     background-color: #fff;
     position: absolute;
@@ -54,21 +54,22 @@ table.actiu {
 table.inactiu {
     transition: all 0.3s 0.01s ease;
 }
+/* Updated slide distance to match new width (250px) */
 table.amagat-esquerra {
-    transform: translateX(-299px);
+    transform: translateX(-250px);
 }
 table.amagat-dreta {
-    transform: translateX(300px);
+    transform: translateX(250px);
 }
 td,th {
     text-align: center;
     background-color: #fff;
 }
 th {
-    padding: 10px;
+    padding: 5px; /* Reduced padding */
 }
 tr:first-child th {
-    font-size: 20px;
+    font-size: 16px; /* Smaller title */
     font-weight: bold;
     border-left: none;
     border-top: none;
@@ -86,7 +87,7 @@ th {
     font-weight: normal;
 }
 th .any {
-    font-size: 12px;
+    font-size: 10px; /* Smaller year text */
     font-weight: normal;
     display: block;
     text-shadow: none;
@@ -101,7 +102,7 @@ td {
 }
 td>span {
     color: #555;
-    padding: 10px;
+    padding: 6px; /* Reduced padding for date cells */
     display: block;
     border: 2px solid transparent;
     transition: border 0.3s ease;
@@ -132,20 +133,20 @@ td > span:hover {
     color: #fff;
     font-family: inherit;
     border: none;
-    font-size: 18px;
+    font-size: 14px; /* Smaller arrows */
     font-weight: bold;
     text-shadow: inherit;
     padding: 2px 10px 5px 10px;
     line-height: 1px;
-    height: 30px;
-    width: 30px;
+    height: 25px; /* Smaller button size */
+    width: 25px;
     vertical-align: middle;
     border-radius: 100%;
     position: absolute;
-    top: 15px;
+    top: 12px;
 }
-.boto-next { right: 10px; padding-left: 13px; }
-.boto-prev { left: 10px; padding-right: 13px;}
+.boto-next { right: 10px; padding-left: 8px; }
+.boto-prev { left: 10px; padding-right: 8px;}
 .boto-next:hover,
 .boto-prev:hover {
     background: rgba(0,0,0,0.2);
@@ -225,9 +226,9 @@ function calendari(widget, data)
     {
         original = document.createElement('table');
         original.setAttribute('data-actual',
-			      data.getFullYear() + '/' +
-			      data.getMonth().pad(2) + '/' +
-			      data.getDate().pad(2))
+              data.getFullYear() + '/' +
+              data.getMonth().pad(2) + '/' +
+              data.getDate().pad(2))
         widget.appendChild(original);
     }
 
@@ -293,22 +294,22 @@ function calendari(widget, data)
         new Date(data.getFullYear(), data.getMonth(), -1).getDay();
 
     var actual = new Date(data.getFullYear(),
-			  data.getMonth(),
-			  -inici_mes);
+              data.getMonth(),
+              -inici_mes);
 
     /* 6 setmanes per cobrir totes les posiblitats
-     *  Quedaria mes consistent alhora de mostrar molts mesos 
-     *  en una quadricula */
+     * Quedaria mes consistent alhora de mostrar molts mesos 
+     * en una quadricula */
     for(var s = 0; s < 6; s++)
     {
         var fila = document.createElement('tr');
 
         for(var d = 1; d < 8; d++)
         {
-	    var cela = document.createElement('td');
-	    var span = document.createElement('span');
+        var cela = document.createElement('td');
+        var span = document.createElement('span');
 
-	    cela.appendChild(span);
+        cela.appendChild(span);
 
             span.innerHTML = actual.getDate();
 
@@ -317,10 +318,10 @@ function calendari(widget, data)
 
             /* Si es avui el decorem */
             if(data.getDate() == actual.getDate() &&
-	       data.getMonth() == actual.getMonth())
-		cela.className = 'avui';
+               data.getMonth() == actual.getMonth())
+        cela.className = 'avui';
 
-	    actual.setDate(actual.getDate()+1);
+        actual.setDate(actual.getDate()+1);
             fila.appendChild(cela);
         }
 
