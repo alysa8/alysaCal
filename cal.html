@@ -37,14 +37,12 @@ button::-moz-focus-inner {
     height: 350px;  
     width: 300px;   
     font-size: 13px; 
-    /* REMOVED CONTAINER SHADOW SO NO BOTTOM BORDER APPEARS */
 }
 
 table {
     border-collapse: collapse;
     table-layout: fixed;
     width: 300px; 
-    /* We keep the shadow here so only the calendar itself looks like a card */
     box-shadow: 0px 1px 3px rgba(0,0,0,0.2); 
     background-color: #fff;
     position: absolute;
@@ -236,13 +234,14 @@ function calendari(widget, data)
         widget.appendChild(original);
     }
 
-    var diff = data - new Date(original.getAttribute('data-actual'));
-
-    diff = new Date(diff).getMonth();
+    // --- LOGIC FIX START ---
+    var current = new Date(original.getAttribute('data-actual'));
+    var isNext = data > current; // True if we are going to the future, False if going back
 
     var e = document.createElement('table');
 
-    e.className = diff  === 0 ? 'amagat-esquerra' : 'amagat-dreta';
+    // If Next: Start Right. If Prev: Start Left.
+    e.className = isNext ? 'amagat-dreta' : 'amagat-esquerra';
     e.innerHTML = '';
 
     widget.appendChild(e);
@@ -334,9 +333,11 @@ function calendari(widget, data)
 
     setTimeout(function() {
         e.className = 'actiu';
+        // If Next: Exit Left. If Prev: Exit Right.
         original.className +=
-        diff === 0 ? ' amagat-dreta' : ' amagat-esquerra';
+        isNext ? ' amagat-esquerra' : ' amagat-dreta';
     }, 20);
+    // --- LOGIC FIX END ---
 
     original.className = 'inactiu';
 
