@@ -219,36 +219,33 @@ Number.prototype.pad = function(num) {
     return str += this.toString();
 }
 
-function calendari(widget, data)
+// Added 'direction' parameter: 1 for Next, -1 for Prev
+function calendari(widget, data, direction)
 {
-
     var original = widget.getElementsByClassName('actiu')[0];
 
     if(typeof original === 'undefined')
     {
         original = document.createElement('table');
+        // Fix: Added +1 to getMonth() so 2026/01/01 doesn't become 2026/00/01
         original.setAttribute('data-actual',
               data.getFullYear() + '/' +
-              data.getMonth().pad(2) + '/' +
+              (data.getMonth() + 1).pad(2) + '/' +
               data.getDate().pad(2))
         widget.appendChild(original);
     }
 
-    // --- LOGIC FIX START ---
-    var current = new Date(original.getAttribute('data-actual'));
-    var isNext = data > current; // True if we are going to the future, False if going back
-
     var e = document.createElement('table');
 
-    // If Next: Start Right. If Prev: Start Left.
-    e.className = isNext ? 'amagat-dreta' : 'amagat-esquerra';
+    // LOGIC: If direction is -1 (Prev), enter from Left. Otherwise default to Right.
+    e.className = direction === -1 ? 'amagat-esquerra' : 'amagat-dreta';
     e.innerHTML = '';
 
     widget.appendChild(e);
 
     e.setAttribute('data-actual',
                    data.getFullYear() + '/' +
-                   data.getMonth().pad(2) + '/' +
+                   (data.getMonth() + 1).pad(2) + '/' +
                    data.getDate().pad(2))
 
     var fila = document.createElement('tr');
@@ -271,12 +268,14 @@ function calendari(widget, data)
 
     boto_prev.onclick = function() {
         data.setMonth(data.getMonth() - 1);
-        calendari(widget, data);
+        // Pass -1 for "Previous" direction
+        calendari(widget, data, -1);
     };
 
     boto_next.onclick = function() {
         data.setMonth(data.getMonth() + 1);
-        calendari(widget, data);
+        // Pass 1 for "Next" direction
+        calendari(widget, data, 1);
     };
 
     fila.appendChild(titol);
@@ -292,7 +291,6 @@ function calendari(widget, data)
     fila.innerHTML += '<th>' + dies_abr[0] + '</th>';
     e.appendChild(fila);
 
-    /* Obtinc el dia que va acabar el mes anterior */
     var inici_mes =
         new Date(data.getFullYear(), data.getMonth(), -1).getDay();
 
@@ -300,9 +298,6 @@ function calendari(widget, data)
               data.getMonth(),
               -inici_mes);
 
-    /* 6 setmanes per cobrir totes les posiblitats
-     * Quedaria mes consistent alhora de mostrar molts mesos 
-     * en una quadricula */
     for(var s = 0; s < 6; s++)
     {
         var fila = document.createElement('tr');
@@ -319,7 +314,6 @@ function calendari(widget, data)
             if(actual.getMonth() !== data.getMonth())
                 cela.className = 'fora';
 
-            /* Si es avui el decorem */
             if(data.getDate() == actual.getDate() &&
                data.getMonth() == actual.getMonth())
         cela.className = 'avui';
@@ -333,11 +327,11 @@ function calendari(widget, data)
 
     setTimeout(function() {
         e.className = 'actiu';
-        // If Next: Exit Left. If Prev: Exit Right.
+        // LOGIC: If direction is -1 (Prev), old table exits to Right.
+        // If direction is 1 (Next), old table exits to Left.
         original.className +=
-        isNext ? ' amagat-esquerra' : ' amagat-dreta';
+        direction === -1 ? ' amagat-dreta' : ' amagat-esquerra';
     }, 20);
-    // --- LOGIC FIX END ---
 
     original.className = 'inactiu';
 
